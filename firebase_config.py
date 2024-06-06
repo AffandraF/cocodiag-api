@@ -1,7 +1,7 @@
 import json
 import pyrebase
 import logging
-from .secret_manager import access_secret_version
+from secret_manager import access_secret_version
 
 def initialize_firebase():
     try:
