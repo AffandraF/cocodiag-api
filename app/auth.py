@@ -1,9 +1,19 @@
 from flask import Blueprint, request, jsonify
 import jwt
+import requests
 from functools import wraps
+from google.auth.transport import requests as grequests
+from google.oauth2 import id_token
 from config.firebase_config import auth, db, SECRET_KEY
+from config.secret_manager import access_secret_version
 
 auth_bp = Blueprint('auth_bp', __name__)
+
+PROJECT_ID = "cocodiag"
+SECRET_ID = "firebase-web-api"
+VERSION_ID = "latest"
+
+FIREBASE_WEB_API_KEY = access_secret_version(PROJECT_ID, SECRET_ID, VERSION_ID)
 
 def firebase_auth_required(f):
     @wraps(f)
@@ -32,9 +42,19 @@ def signup():
     password = data.get('password')
 
     try:
-        user = auth.create_user_with_email_and_password(email, password)
-        user_id = user['localId']
-        db.child("users").child(user_id).set({"name": name, "email": email})
+        user = auth.create_user(
+            email=email,
+            password=password,
+            display_name=name
+        )
+        user_id = user.uid
+
+        db.collection('users').document(user_id).set({
+            "name": name,
+            "email": email,
+            "imageProfile": None
+        })
+
         return jsonify({
             "id": user_id,
             "name": name,
@@ -51,15 +71,31 @@ def signin():
     password = data.get('password')
 
     try:
-        user = auth.sign_in_with_email_and_password(email, password)
-        user_id = user['localId']
-        user_info = db.child("users").child(user_id).get().val()
+        payload = {
+            'email': email,
+            'password': password,
+            'returnSecureToken': True
+        }
+        response = requests.post(f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={FIREBASE_WEB_API_KEY}", data=payload)
+        response_data = response.json()
+
+        if 'error' in response_data:
+            raise Exception(response_data['error']['message'])
+
+        id_token_str = response_data['idToken']
+        decoded_token = id_token.verify_oauth2_token(id_token_str, grequests.Request())
+        user_id = decoded_token['uid']
+
         token = jwt.encode({"user_id": user_id}, SECRET_KEY, algorithm='HS256')
+
+        user_info_ref = db.collection('users').document(user_id)
+        user_info = user_info_ref.get().to_dict()
+
         return jsonify({
             "id": user_id,
             "name": user_info['name'],
             "email": user_info['email'],
-            "imageProfile": None,
+            "imageProfile": user_info.get('imageProfile'),
             "token": token
         }), 200
     except Exception as e:

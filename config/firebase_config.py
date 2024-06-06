@@ -1,6 +1,7 @@
 import json
-import pyrebase
 import logging
+import firebase_admin
+from firebase_admin import credentials, firestore, auth
 from config.secret_manager import access_secret_version
 
 def initialize_firebase():
@@ -12,12 +13,13 @@ def initialize_firebase():
         firebase_config_json = access_secret_version(PROJECT_ID, SECRET_ID, VERSION_ID)
         firebase_config = json.loads(firebase_config_json)
 
-        firebase = pyrebase.initialize_app(firebase_config)
-        auth = firebase.auth()
-        db = firebase.firestore()
+        cred = credentials.Certificate(firebase_config)
+        firebase_admin.initialize_app(cred)
+
+        db = firestore.client()
         
         logging.info("Firebase initialized successfully.")
-        return firebase, auth, db
+        return db
 
     except json.JSONDecodeError as e:
         logging.error(f"Error decoding JSON: {e}")
@@ -26,7 +28,7 @@ def initialize_firebase():
         logging.error(f"General error: {e}")
         raise
 
-firebase, auth, db = initialize_firebase()
+db = initialize_firebase()
 
 SECRET_PROJECT_ID = "cocodiag"
 SECRET_ID = "jwt-secret-key"
