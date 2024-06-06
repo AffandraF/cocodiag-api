@@ -12,13 +12,13 @@ def access_secret_version(project_id, secret_id, version_id):
     return response.payload.data.decode("UTF-8")
 
 PROJECT_ID = "cocodiag"
-SECRET_ID = "NEWS_API_KEY"
+SECRET_ID = "news-api"
 VERSION_ID = "latest"
 
 NEWS_API_KEY = access_secret_version(PROJECT_ID, SECRET_ID, VERSION_ID)
 NEWS_API_URL = 'https://newsapi.org/v2/everything'
 
-@news_api_bp.route('/getNews', methods=['GET'])
+@news_bp.route('/getNews', methods=['GET'])
 @firebase_auth_required
 def get_news():
     topics = [

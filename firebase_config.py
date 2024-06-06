@@ -1,15 +1,20 @@
+import os
+import json
 import pyrebase
+from google.cloud import secretmanager
 
-firebase_config = {
-    "apiKey": "YOUR_API_KEY",
-    "authDomain": "YOUR_PROJECT_ID.firebaseapp.com",
-    "databaseURL": "https://YOUR_PROJECT_ID.firebaseio.com",
-    "projectId": "YOUR_PROJECT_ID",
-    "storageBucket": "YOUR_PROJECT_ID.appspot.com",
-    "messagingSenderId": "YOUR_MESSAGING_SENDER_ID",
-    "appId": "YOUR_APP_ID",
-    "measurementId": "YOUR_MEASUREMENT_ID"
-}
+def access_secret_version(project_id, secret_id, version_id):
+    client = secretmanager.SecretManagerServiceClient()
+    name = f"projects/{project_id}/secrets/{secret_id}/versions/{version_id}"
+    response = client.access_secret_version(request={"name": name})
+    return response.payload.data.decode("UTF-8")
+
+PROJECT_ID = "cocodiag"
+SECRET_ID = "firebase-config"
+VERSION_ID = "latest"
+
+firebase_config_json = access_secret_version(PROJECT_ID, SECRET_ID, VERSION_ID)
+firebase_config = json.loads(firebase_config_json)
 
 firebase = pyrebase.initialize_app(firebase_config)
 auth = firebase.auth()
