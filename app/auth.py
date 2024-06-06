@@ -6,6 +6,7 @@ from google.auth.transport import requests as grequests
 from google.oauth2 import id_token
 from config.firebase_config import auth, db, SECRET_KEY
 from config.secret_manager import access_secret_version
+import logging
 
 auth_bp = Blueprint('auth_bp', __name__)
 
@@ -79,13 +80,20 @@ def signin():
         response = requests.post(f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={FIREBASE_WEB_API_KEY}", data=payload)
         response_data = response.json()
 
+        logging.debug(f"Response Data: {response_data}")
+
         if 'error' in response_data:
             raise Exception(response_data['error']['message'])
 
         id_token_str = response_data['idToken']
-        decoded_token = id_token.verify_oauth2_token(id_token_str, grequests.Request())
-        user_id = decoded_token['uid']
-
+        
+        try:
+            decoded_token = id_token.verify_oauth2_token(id_token_str, grequests.Request())
+            user_id = decoded_token['uid']
+        except ValueError as e:
+            logging.error(f"Token verification failed: {e}")
+            raise Exception("Token verification failed. Check your network connection and ensure the token is valid.")
+        
         token = jwt.encode({"user_id": user_id}, SECRET_KEY, algorithm='HS256')
 
         user_info_ref = db.collection('users').document(user_id)
@@ -99,6 +107,7 @@ def signin():
             "token": token
         }), 200
     except Exception as e:
+        logging.error(f"Sign-in error: {e}")
         return jsonify({"message": str(e)}), 400
 
 @auth_bp.route('/protected', methods=['GET'])
