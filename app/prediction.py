@@ -20,7 +20,7 @@ def download_model(bucket_name, bucket_path, local_path):
         logging.error(f"Error downloading model: {str(e)}")
         raise e
 
-bucket_name = 'cocodiag-coba-bucket'
+bucket_name = 'cocodiag-storage '
 model_path = 'model/coconut_model.keras'
 local_model_path = '/tmp/coconut_model.keras'
 
