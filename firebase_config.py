@@ -1,17 +1,7 @@
 import json
 import pyrebase
-from google.cloud import secretmanager
 import logging
-
-def access_secret_version(project_id, secret_id, version_id):
-    try:
-        client = secretmanager.SecretManagerServiceClient()
-        name = f"projects/{project_id}/secrets/{secret_id}/versions/{version_id}"
-        response = client.access_secret_version(request={"name": name})
-        return response.payload.data.decode("UTF-8")
-    except Exception as e:
-        logging.error(f"Error accessing secret version: {e}")
-        raise
+from .secret_manager import access_secret_version
 
 def initialize_firebase():
     try:
@@ -40,3 +30,8 @@ def initialize_firebase():
         raise
 
 firebase, auth, db = initialize_firebase()
+
+SECRET_PROJECT_ID = "cocodiag"
+SECRET_ID = "jwt-secret-key"
+VERSION_ID = "latest"
+SECRET_KEY = access_secret_version(SECRET_PROJECT_ID, SECRET_ID, VERSION_ID)

@@ -2,7 +2,7 @@ from flask import Flask
 
 def create_app():
     app = Flask(__name__)
-    
+
     from .prediction import prediction_bp
     from .price import price_bp
     from .auth import auth_bp

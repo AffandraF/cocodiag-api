@@ -1,15 +1,9 @@
 from flask import Blueprint, jsonify, request
 import requests
-from google.cloud import secretmanager
 from .auth import firebase_auth_required
+from ..secret_manager import access_secret_version
 
 news_bp = Blueprint('news_bp', __name__)
-
-def access_secret_version(project_id, secret_id, version_id):
-    client = secretmanager.SecretManagerServiceClient()
-    name = f"projects/{project_id}/secrets/{secret_id}/versions/{version_id}"
-    response = client.access_secret_version(request={"name": name})
-    return response.payload.data.decode("UTF-8")
 
 PROJECT_ID = "cocodiag"
 SECRET_ID = "news-api"
