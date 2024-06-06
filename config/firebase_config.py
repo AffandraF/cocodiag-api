@@ -14,7 +14,7 @@ def initialize_firebase():
 
         firebase = pyrebase.initialize_app(firebase_config)
         auth = firebase.auth()
-        db = firebase.database()
+        db = firebase.firestore()
         
         logging.info("Firebase initialized successfully.")
         return firebase, auth, db
