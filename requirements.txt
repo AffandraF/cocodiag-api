@@ -10,3 +10,4 @@ selenium
 webdriver-manager
 Pyrebase
 jwt
+Cmake
