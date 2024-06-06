@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 import pyrebase
 import jwt
 from functools import wraps
-from ..firebase_config import firebase_config, SECRET_KEY
+from firebase_config import firebase_config, SECRET_KEY
 
 auth_bp = Blueprint('auth_bp', __name__)
 
