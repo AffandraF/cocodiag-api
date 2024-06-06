@@ -6,7 +6,7 @@ from PIL import Image
 import io
 import logging
 import time
-from auth import firebase_auth_required
+from app.auth import firebase_auth_required
 
 prediction_bp = Blueprint('prediction_bp', __name__)
 

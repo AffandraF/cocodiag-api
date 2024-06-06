@@ -1,14 +1,9 @@
 from flask import Blueprint, request, jsonify
-import pyrebase
 import jwt
 from functools import wraps
-from config.firebase_config import firebase_config, SECRET_KEY
+from config.firebase_config import auth, db, SECRET_KEY
 
 auth_bp = Blueprint('auth_bp', __name__)
-
-firebase = pyrebase.initialize_app(firebase_config)
-auth = firebase.auth()
-db = firebase.database()
 
 def firebase_auth_required(f):
     @wraps(f)

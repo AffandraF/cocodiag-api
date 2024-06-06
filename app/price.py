@@ -3,7 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
-from auth import firebase_auth_required
+from app.auth import firebase_auth_required
 
 price_bp = Blueprint('price_bp', __name__)
 
