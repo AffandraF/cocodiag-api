@@ -1,7 +1,7 @@
 import json
 import pyrebase
 import logging
-from secret_manager import access_secret_version
+from config.secret_manager import access_secret_version
 
 def initialize_firebase():
     try:
@@ -21,9 +21,6 @@ def initialize_firebase():
 
     except json.JSONDecodeError as e:
         logging.error(f"Error decoding JSON: {e}")
-        raise
-    except pyrebase.pyrebase.PyrebaseException as e:
-        logging.error(f"Pyrebase error: {e}")
         raise
     except Exception as e:
         logging.error(f"General error: {e}")

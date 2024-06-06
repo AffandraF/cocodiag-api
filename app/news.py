@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 import requests
 from auth import firebase_auth_required
-from secret_manager import access_secret_version
+from config.secret_manager import access_secret_version
 
 news_bp = Blueprint('news_bp', __name__)
 
