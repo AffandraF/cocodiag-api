@@ -1,9 +1,14 @@
 from flask import Flask
 from flask_jwt_extended import JWTManager
-from config.firebase_config import SECRET_KEY
+from config.secret_manager import access_secret_version
 
 def create_app():
     app = Flask(__name__)
+
+    SECRET_PROJECT_ID = "cocodiag"
+    SECRET_ID = "jwt-secret-key"
+    VERSION_ID = "latest"
+    SECRET_KEY = access_secret_version(SECRET_PROJECT_ID, SECRET_ID, VERSION_ID).decode('utf-8')
 
     app.config['JWT_SECRET_KEY'] = SECRET_KEY
     jwt = JWTManager(app)
