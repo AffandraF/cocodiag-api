@@ -1,5 +1,4 @@
 from flask import Blueprint, request, jsonify
-from functools import wraps
 from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
 from config.firebase_config import auth, db
 from config.secret_manager import access_secret_version
@@ -9,13 +8,6 @@ import logging
 auth_bp = Blueprint('auth_bp', __name__)
 
 API_KEY = access_secret_version('cocodiag', 'firebase-web-api', 'latest')
-
-# def jwt_required():
-#     @wraps(fn)
-#     def wrapper(*args, **kwargs):
-#         verify_jwt_in_request()
-#         return fn(*args, **kwargs)
-#     return wrapper
 
 @auth_bp.route('/signup', methods=['POST'])
 def signup():
@@ -72,13 +64,6 @@ def signin():
         if not id_token_str:
             raise Exception("ID token is missing in the response")
 
-        # try:
-        #     decoded_token = id_token.verify_oauth2_token(id_token_str, grequests.Request())
-        #     user_id = decoded_token['uid']
-        # except ValueError as e:
-        #     logging.error(f"Token verification failed: {e}")
-        #     raise Exception("Token verification failed. Check your network connection and ensure the token is valid.")
-        
         user_id = response_data.get('localId')
 
         access_token = create_access_token(identity=user_id)        
