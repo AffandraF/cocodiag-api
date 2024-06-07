@@ -8,7 +8,7 @@ def create_app():
     SECRET_PROJECT_ID = "cocodiag"
     SECRET_ID = "jwt-secret-key"
     VERSION_ID = "latest"
-    SECRET_KEY = access_secret_version(SECRET_PROJECT_ID, SECRET_ID, VERSION_ID).decode('utf-8')
+    SECRET_KEY = access_secret_version(SECRET_PROJECT_ID, SECRET_ID, VERSION_ID)
 
     app.config['JWT_SECRET_KEY'] = SECRET_KEY
     jwt = JWTManager(app)
@@ -28,4 +28,4 @@ def create_app():
 app = create_app()
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
+    app.run(debug=True, host='0.0.0.0', port=8080)

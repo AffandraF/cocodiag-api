@@ -1,12 +1,14 @@
 from flask import Blueprint, request, jsonify
 from functools import wraps
 from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token
-from google.auth.transport import requests as grequests
-from google.oauth2 import id_token
 from config.firebase_config import auth, db
+from config.secret_manager import access_secret_version
+import requests
 import logging
 
 auth_bp = Blueprint('auth_bp', __name__)
+
+API_KEY = access_secret_version('cocodiag', 'firebase-web-api', 'latest')
 
 def firebase_auth_required(f):
     @wraps(f)
@@ -51,24 +53,51 @@ def signup():
 @auth_bp.route('/signin', methods=['POST'])
 def signin():
     data = request.get_json()
-    token = data.get('token')
+    email = data.get('email')
+    password = data.get('password')
 
     try:
-        # Verify ID token
-        decoded_token = id_token.verify_oauth2_token(token, grequests.Request())
-        user_id = decoded_token['uid']
+        payload = {
+            'email': email,
+            'password': password,
+            'returnSecureToken': True
+        }
+        response = requests.post(f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={API_KEY}", json=payload)
+        
+        response_data = response.json()
 
-        # Retrieve user info from Firestore
+        logging.debug(f"Response Data: {response_data}")
+
+        if 'error' in response_data:
+            raise Exception(response_data['error']['message'])
+
+        id_token_str = response_data.get('idToken')
+        if not id_token_str:
+            raise Exception("ID token is missing in the response")
+
+        # try:
+        #     decoded_token = id_token.verify_oauth2_token(id_token_str, grequests.Request())
+        #     user_id = decoded_token['uid']
+        # except ValueError as e:
+        #     logging.error(f"Token verification failed: {e}")
+        #     raise Exception("Token verification failed. Check your network connection and ensure the token is valid.")
+        
+        user_id = response_data.get('localId')
+
+        access_token = create_access_token(identity=user_id)        
+        
         user_info_ref = db.collection('users').document(user_id)
-        user_info = user_info_ref.get().to_dict()
-
-        # Create access token using Flask-JWT-Extended
-        access_token = create_access_token(identity=user_id)
+        user_info_doc = user_info_ref.get()
+        
+        if not user_info_doc.exists:
+            raise Exception("User not found in Firestore")
+        
+        user_info = user_info_doc.to_dict()
 
         return jsonify({
             "id": user_id,
-            "name": user_info['name'],
-            "email": user_info['email'],
+            "name": user_info.get('name'),
+            "email": user_info.get('email'),
             "imageProfile": user_info.get('imageProfile'),
             "token": access_token
         }), 200
