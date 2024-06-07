@@ -1,7 +1,12 @@
 from flask import Flask
+from flask_jwt_extended import JWTManager
+from config.firebase_config import SECRET_KEY
 
 def create_app():
     app = Flask(__name__)
+
+    app.config['JWT_SECRET_KEY'] = SECRET_KEY
+    jwt = JWTManager(app)
 
     from app.auth import auth_bp
     from app.prediction import prediction_bp

@@ -13,11 +13,12 @@ def initialize_firebase():
         firebase_config_json = access_secret_version(PROJECT_ID, SECRET_ID, VERSION_ID)
         firebase_config = json.loads(firebase_config_json)
 
-        cred = credentials.Certificate(firebase_config)
-        firebase_admin.initialize_app(cred)
+        if not firebase_admin._apps:
+            cred = credentials.Certificate(firebase_config)
+            firebase_admin.initialize_app(cred)
 
         db = firestore.client()
-        
+
         logging.info("Firebase initialized successfully.")
         return db
 
@@ -29,8 +30,3 @@ def initialize_firebase():
         raise
 
 db = initialize_firebase()
-
-SECRET_PROJECT_ID = "cocodiag"
-SECRET_ID = "jwt-secret-key"
-VERSION_ID = "latest"
-SECRET_KEY = access_secret_version(SECRET_PROJECT_ID, SECRET_ID, VERSION_ID)
