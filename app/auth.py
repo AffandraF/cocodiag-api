@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from functools import wraps
-from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token
+from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
 from config.firebase_config import auth, db
 from config.secret_manager import access_secret_version
 import requests
@@ -10,15 +10,12 @@ auth_bp = Blueprint('auth_bp', __name__)
 
 API_KEY = access_secret_version('cocodiag', 'firebase-web-api', 'latest')
 
-def firebase_auth_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        current_user = get_jwt_identity()
-        if not current_user:
-            return jsonify({"message": "Unauthorized"}), 401
-        request.user_id = current_user
-        return f(*args, **kwargs)
-    return decorated_function
+# def jwt_required():
+#     @wraps(fn)
+#     def wrapper(*args, **kwargs):
+#         verify_jwt_in_request()
+#         return fn(*args, **kwargs)
+#     return wrapper
 
 @auth_bp.route('/signup', methods=['POST'])
 def signup():
@@ -107,9 +104,9 @@ def signin():
 
 @auth_bp.route('/protected', methods=['GET'])
 @jwt_required()
-@firebase_auth_required
 def protected():
     try:
-        return jsonify({"message": f"Hello user {request.user_id}"}), 200
+        user_id = get_jwt_identity()
+        return jsonify({"message": f"Hello user {user_id}"}), 200
     except Exception as e:
         return jsonify({"message": str(e)}), 500

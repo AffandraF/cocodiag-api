@@ -3,7 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
-from app.auth import firebase_auth_required
+from app.auth import jwt_required
 
 price_bp = Blueprint('price_bp', __name__)
 
@@ -41,8 +41,8 @@ def get_data():
     except Exception as e:
         return {"error": str(e)}
 
-@price_bp.route('/data', methods=['GET'])
-@firebase_auth_required
+@price_bp.route('/getPrice', methods=['GET'])
+@jwt_required()
 def send_data():
     data = get_data()
 
