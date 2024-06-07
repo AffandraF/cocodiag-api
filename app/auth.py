@@ -1,7 +1,6 @@
 from flask import Blueprint, request, jsonify
 from functools import wraps
 from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token
-from flask_jwt_extended.exceptions import JWTError
 from google.auth.transport import requests as grequests
 from google.oauth2 import id_token
 from config.firebase_config import auth, db
@@ -83,7 +82,5 @@ def signin():
 def protected():
     try:
         return jsonify({"message": f"Hello user {request.user_id}"}), 200
-    except JWTError:
-        return jsonify({"message": "Invalid JWT token"}), 401
     except Exception as e:
         return jsonify({"message": str(e)}), 500
