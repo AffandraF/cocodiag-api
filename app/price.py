@@ -8,6 +8,7 @@ price_bp = Blueprint('price_bp', __name__)
 def get_data():
     try:
         options = uc.ChromeOptions()
+        options.binary_location = "/usr/bin/google-chrome"
         options.add_argument("--headless")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
