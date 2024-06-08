@@ -12,25 +12,24 @@ def get_data():
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
 
-        driver = uc.Chrome(options=options, browser_executable_path="/usr/bin/google-chrome-stable", driver_executable_path="/tmp/chromedriver")
+        driver = uc.Chrome(
+            options=options, 
+            browser_executable_path="/usr/bin/chromium", 
+            driver_executable_path="/tmp/chromedriver"
+        )
 
         url = "https://infopangan.jakarta.go.id/publik/dashboard/23"
         driver.get(url)
 
-        date = driver.find_element(By.ID, "avg_tanggal")
-        date = date.text
-
-        price = driver.find_element(By.ID, "avg_value")
-        price = price.text
-
-        region = driver.find_element(By.ID, "avg_object")
-        region = region.text        
+        date = driver.find_element(By.ID, "avg_tanggal").text
+        price = driver.find_element(By.ID, "avg_value").text
+        region = driver.find_element(By.ID, "avg_object").text        
 
         driver.quit()
 
         response = {
             "date": date,
-            "price": price,            
+            "price": price,
             "region": region
         }
 
