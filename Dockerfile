@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     unzip && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN GECKODRIVER_VERSION=0.31.0 && \
+RUN GECKODRIVER_VERSION=0.34.0 && \
     wget -q --show-progress --progress=bar:force:noscroll -O /tmp/geckodriver.tar.gz "https://github.com/mozilla/geckodriver/releases/download/v${GECKODRIVER_VERSION}/geckodriver-v${GECKODRIVER_VERSION}-linux64.tar.gz" && \
     tar -C /usr/local/bin -zxf /tmp/geckodriver.tar.gz && \
     rm /tmp/geckodriver.tar.gz
