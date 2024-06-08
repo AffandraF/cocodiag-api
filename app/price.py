@@ -13,6 +13,8 @@ def get_data():
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
 
+        options.binary_location = '/usr/bin/firefox'
+
         driver = webdriver.Firefox(options=options)
 
         url = "https://infopangan.jakarta.go.id/publik/dashboard/23"
