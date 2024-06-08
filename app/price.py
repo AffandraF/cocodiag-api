@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify
 from selenium.webdriver.common.by import By
-import undetected_chromedriver.v2 as uc
+import undetected_chromedriver as uc
 from app.auth import jwt_required
 
 price_bp = Blueprint('price_bp', __name__)
