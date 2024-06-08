@@ -8,12 +8,11 @@ price_bp = Blueprint('price_bp', __name__)
 def get_data():
     try:
         options = uc.ChromeOptions()
-        options.binary_location = "/usr/bin/google-chrome"
         options.add_argument("--headless")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
 
-        driver = uc.Chrome(options=options)
+        driver = uc.Chrome(options=options, browser_executable_path="/usr/bin/google-chrome-stable", driver_executable_path="/tmp/chromedriver")
 
         url = "https://infopangan.jakarta.go.id/publik/dashboard/23"
         driver.get(url)
