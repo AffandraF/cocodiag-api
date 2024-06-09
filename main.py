@@ -19,11 +19,13 @@ def create_app():
     from app.prediction import prediction_bp
     from app.price import price_bp
     from app.news import news_bp
+    from app.user import user_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(prediction_bp)
     app.register_blueprint(price_bp)
     app.register_blueprint(news_bp)
+    app.register_blueprint(user_bp)
 
     return app
 
