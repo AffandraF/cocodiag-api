@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from config.secret_manager import access_secret_version
+from datetime import timedelta
 
 def create_app():
     app = Flask(__name__)
@@ -11,6 +12,7 @@ def create_app():
     SECRET_KEY = access_secret_version(SECRET_PROJECT_ID, SECRET_ID, VERSION_ID)
 
     app.config['JWT_SECRET_KEY'] = SECRET_KEY
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(weeks=1)
     jwt = JWTManager(app)
 
     from app.auth import auth_bp
