@@ -65,7 +65,7 @@ def predict():
 
     try:
         image = Image.open(io.BytesIO(file.read()))
-        processed_image = prepare_image(image, target_size=(150, 150)) 
+        processed_image = prepare_image(image, target_size=(224, 224)) 
         predictions = model.predict(processed_image)
         predicted_class_index = np.argmax(predictions, axis=1)[0]
         accuracy = np.max(predictions)
