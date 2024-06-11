@@ -78,8 +78,9 @@ def predict():
             'label': predicted_class,
             'accuracy': f"{accuracy:.2%}", 
             'name': disease_info['name'],
+            'caused_by': disease_info['caused_by'],
             'symptoms': disease_info['symptoms'],
-            'control': disease_info['control'],
+            'controls': disease_info['controls'],
             'created_at': int(time.time())
         }
         return jsonify(response)
