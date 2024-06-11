@@ -41,8 +41,6 @@ except Exception as e:
     model = None
     class_info = {}
 
-# TODO: Load class info from cloud storage
-
 class_names = list(class_info.keys())
 
 def prepare_image(image, target_size):
@@ -78,9 +76,6 @@ def predict():
 
         response = {
             'label': predicted_class,
-            'prediction': predictions.tolist(),
-            'predicted_class_index': predicted_class_index,
-            'predicted_class': predicted_class,
             'accuracy': f"{accuracy:.2%}", 
             'name': disease_info['name'],
             'symptoms': disease_info['symptoms'],
