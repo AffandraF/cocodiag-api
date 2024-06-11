@@ -8,6 +8,8 @@ import logging
 import time
 from flask_jwt_extended import jwt_required
 import json
+from config.firebase_config import db
+
 
 prediction_bp = Blueprint('prediction_bp', __name__)
 
@@ -55,6 +57,7 @@ def prepare_image(image, target_size):
 @prediction_bp.route('/predict', methods=['POST'])
 @jwt_required()
 def predict():
+    user_id = get_jwt_identity()
     if 'imageFile' not in request.files:
         return jsonify({'error': 'Image file not provided'}), 400
     file = request.files['imageFile']
@@ -83,6 +86,16 @@ def predict():
             'controls': disease_info['controls'],
             'created_at': int(time.time())
         }
+
+        #Save the prediction to history
+        doc_ref = db.collection('history').document()
+        doc_ref.set({
+            "user_id": user_id,
+            "image": file.filename,
+            "created_at": response['created_at'],
+            "result": response
+        })
+        
         return jsonify(response)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
