@@ -80,6 +80,7 @@ def predict():
             'label': predicted_class,
             'prediction': predictions,
             'predicted_class_index': predicted_class_index,
+            'predicted_class': predicted_class,
             'accuracy': f"{accuracy:.2%}", 
             'name': disease_info['name'],
             'symptoms': disease_info['symptoms'],
