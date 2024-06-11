@@ -78,7 +78,7 @@ def predict():
 
         response = {
             'label': predicted_class,
-            'prediction': predictions,
+            'prediction': predictions.tolist(),
             'predicted_class_index': predicted_class_index,
             'predicted_class': predicted_class,
             'accuracy': f"{accuracy:.2%}", 
