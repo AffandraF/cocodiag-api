@@ -6,7 +6,7 @@ from PIL import Image
 import io
 import logging
 import time
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 import json
 from config.firebase_config import db
 
@@ -56,8 +56,7 @@ def prepare_image(image, target_size):
 
 @prediction_bp.route('/predict', methods=['POST'])
 @jwt_required()
-def predict():
-    user_id = get_jwt_identity()
+def predict():    
     if 'imageFile' not in request.files:
         return jsonify({'error': 'Image file not provided'}), 400
     file = request.files['imageFile']
@@ -87,7 +86,8 @@ def predict():
             'created_at': int(time.time())
         }
 
-        #Save the prediction to history
+        user_id = get_jwt_identity()
+        
         doc_ref = db.collection('history').document()
         doc_ref.set({
             "user_id": user_id,
