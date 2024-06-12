@@ -41,10 +41,13 @@ def get_history(user_id):
 
 @history_bp.route('/history/<user_id>/<history_id>', methods=['DELETE'])
 @jwt_required()
-def delete_history(history_id):
-    user_id = get_jwt_identity()
+def delete_history(user_id, history_id):
     try:
-        history_ref = db.collection('history').document(history_id).where('user_id', '==', user_id)
+        current_user_id = get_jwt_identity()
+        if current_user_id != user_id:
+            return jsonify({"message": "Access denied"}), 403
+
+        history_ref = db.collection('history').document(history_id)
         history_doc = history_ref.get()
 
         if not history_doc.exists:
@@ -60,25 +63,27 @@ def delete_history(history_id):
     except Exception as e:
         logging.error(f"Delete history error: {e}")
         return jsonify({"message": str(e)}), 400
-    
+
 @history_bp.route('/history/<user_id>', methods=['DELETE'])
 @jwt_required()
-def delete_user_history():
-    user_id = get_jwt_identity()
+def delete_all_history(user_id):
     try:
-        history_ref = db.collection('history').where('user_id', '==', user_id)
-        history_doc = history_ref.get()
-
-        if not history_doc.exists:
-            return jsonify({"message": "History not found"}), 404
-
-        history_data = history_doc.to_dict()
-
-        if history_data["user_id"] != user_id:
+        current_user_id = get_jwt_identity()
+        if current_user_id != user_id:
             return jsonify({"message": "Access denied"}), 403
 
-        history_ref.delete()
-        return jsonify({"message": "History deleted successfully"}), 200
+        history_ref = db.collection('history').where('user_id', '==', user_id)
+        docs = history_ref.stream()
+
+        deleted_any = False
+        for doc in docs:
+            doc.reference.delete()
+            deleted_any = True
+
+        if deleted_any:
+            return jsonify({"message": "All history deleted successfully"}), 200
+        else:
+            return jsonify({"message": "No history found for this user"}), 404
     except Exception as e:
-        logging.error(f"Delete history error: {e}")
+        logging.error(f"Delete all history error: {e}")
         return jsonify({"message": str(e)}), 400
