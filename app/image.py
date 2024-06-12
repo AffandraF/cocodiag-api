@@ -16,9 +16,10 @@ def get_image():
         return jsonify({'error': 'Image URL not provided'}), 400
 
     try:
+        bucket_name = 'cocodiag.appspot.com'
+                
         parsed_url = urlparse(img_url)
-        bucket_name = parsed_url.netloc.split('.')[0] + '.appspot.com'
-        blob_path = parsed_url.path.lstrip('/')
+        blob_path = '/'.join(parsed_url.path.split('/')[2:])
 
         firebase_bucket = storage.bucket(bucket_name)
         blob = firebase_bucket.blob(blob_path)
