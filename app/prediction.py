@@ -87,13 +87,19 @@ def predict():
         }
 
         user_id = get_jwt_identity()
-        
+        client = storage.Client()
+        bucket = client.get_bucket(bucket_name)
+        blob = bucket.blob(f'uploads/{user_id}/{file.filename}')
+        blob.upload_from_string(file.read(), content_type=file.content_type)
+        image_url = blob.public_url
+
         doc_ref = db.collection('history').document()
         doc_ref.set({
             "user_id": user_id,
             "image": file.filename,
             "created_at": response['created_at'],
-            "result": response
+            "result": response,
+            "image_url": image_url
         })
         
         return jsonify(response)

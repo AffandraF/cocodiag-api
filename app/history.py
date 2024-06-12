@@ -31,26 +31,38 @@ def create_history():
         logging.error(f"Create history error: {e}")
         return jsonify({"message": str(e)}), 400
 
-@history_bp.route('/history/<history_id>', methods=['GET'])
+@history_bp.route('/history/<user_id>', methods=['GET'])
 @jwt_required()
-def get_history(history_id):
-    user_id = get_jwt_identity()
+def get_history(user_id):
     try:
-        history_ref = db.collection('history').document(history_id)
-        history_doc = history_ref.get()
+        history_ref = db.collection('history').where('user_id', '==', user_id)
+        docs = history_ref.stream()
 
-        if not history_doc.exists:
-            return jsonify({"message": "History not found"}), 404
+        history_list = []
+        for doc in docs:
+            history_data = doc.to_dict()
+            history_list.append({
+                "history_id": doc.id,
+                "label": history_data['result']['label'],
+                "accuracy": history_data['result']['accuracy'],
+                "name": history_data['result']['name'],
+                "symptoms": history_data['result']['symptoms'],
+                "controls": history_data['result']['controls'],
+                "created_at": history_data['created_at'],
+                "image_url": history_data['image_url']
+            })
 
-        history_data = history_doc.to_dict()
-
-        if history_data["user_id"] != user_id:
-            return jsonify({"message": "Access denied"}), 403
-
-        return jsonify(history_data), 200
+        if history_list:
+            response = {
+                "user_id": user_id,
+                "history": history_list
+            }
+            return jsonify(response)
+        else:
+            return jsonify({'message': 'No history found for this user'}), 404
     except Exception as e:
-        logging.error(f"Get history error: {e}")
-        return jsonify({"message": str(e)}), 400
+        logging.error(f"Error fetching history: {str(e)}")
+        return jsonify({'message': 'Cause fail'}), 500
 
 @history_bp.route('/history/<history_id>', methods=['PUT'])
 @jwt_required()
