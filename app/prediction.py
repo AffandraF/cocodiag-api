@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from google.cloud import storage
+from firebase_admin import storage
 import tensorflow as tf
 import numpy as np
 from PIL import Image
@@ -10,13 +10,11 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 import json
 from config.firebase_config import db
 
-
 prediction_bp = Blueprint('prediction_bp', __name__)
 
 def download_and_load(bucket_name, bucket_path, local_path=None, is_json=False):
     try:
-        client = storage.Client()
-        bucket = client.get_bucket(bucket_name)
+        bucket = storage.bucket(bucket_name)
         blob = bucket.blob(bucket_path)
         
         if is_json:
@@ -73,7 +71,6 @@ def predict():
         if predicted_class_index < len(class_names):
             predicted_class = class_names[predicted_class_index]
 
-        # TODO: Add handling for outside classes
         disease_info = class_info.get(predicted_class)
 
         response = {
@@ -87,8 +84,8 @@ def predict():
         }
 
         user_id = get_jwt_identity()
-        client = storage.Client()
-        bucket = client.get_bucket(bucket_name)
+        
+        bucket = storage.bucket()
         blob = bucket.blob(f'uploads/{user_id}/{file.filename}')
         blob.upload_from_string(file.read(), content_type=file.content_type)
         image_url = blob.public_url
