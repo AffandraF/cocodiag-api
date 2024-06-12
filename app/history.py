@@ -63,7 +63,7 @@ def delete_history(history_id):
     
 @history_bp.route('/history/<user_id>', methods=['DELETE'])
 @jwt_required()
-def delete_history():
+def delete_user_history():
     user_id = get_jwt_identity()
     try:
         history_ref = db.collection('history').where('user_id', '==', user_id)
