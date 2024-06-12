@@ -4,6 +4,7 @@ from PIL import Image
 import io
 import logging
 from flask_jwt_extended import jwt_required
+from urllib.parse import urlparse
 
 image_bp = Blueprint('image_bp', __name__)
 
@@ -13,11 +14,14 @@ def get_image():
     img_url = request.args.get('img_url')
     if not img_url:
         return jsonify({'error': 'Image URL not provided'}), 400
-    bucket_name = 'cocodiag.appspot.com'
 
     try:
+        parsed_url = urlparse(img_url)
+        bucket_name = parsed_url.netloc.split('.')[0] + '.appspot.com'
+        blob_path = parsed_url.path.lstrip('/')
+
         firebase_bucket = storage.bucket(bucket_name)
-        blob = firebase_bucket.blob(img_url)
+        blob = firebase_bucket.blob(blob_path)
 
         image_data = blob.download_as_bytes()
         image = Image.open(io.BytesIO(image_data))
