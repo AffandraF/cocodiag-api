@@ -22,6 +22,7 @@ def create_app():
     from app.user import user_bp
     from app.history import history_bp
     from app.forum import forum_bp
+    from app.image import image_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(prediction_bp)
@@ -30,6 +31,7 @@ def create_app():
     app.register_blueprint(user_bp)
     app.register_blueprint(history_bp)
     app.register_blueprint(forum_bp)
+    app.register_blueprint(image_bp)
 
     return app
 

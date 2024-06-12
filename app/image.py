@@ -1,15 +1,13 @@
 from flask import Blueprint, request, jsonify, send_file
 from firebase_admin import storage
-import tensorflow as tf
-import numpy as np
 from PIL import Image
 import io
 import logging
-import time
 from flask_jwt_extended import jwt_required
 
 image_bp = Blueprint('image_bp', __name__)
 
+@image_bp.route('/image', methods=['GET'])
 @jwt_required()
 def get_image():
     img_url = request.args.get('img_url')
