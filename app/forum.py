@@ -1,27 +1,39 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from config.firebase_config import db
+from firebase_admin import storage
 import logging
 from datetime import datetime
+import uuid
 
 forum_bp = Blueprint('forum_bp', __name__)
 
 @forum_bp.route('/forum', methods=['POST'])
 @jwt_required()
 def create_post():
-    data = request.get_json()
+    data = request.form
     user_id = get_jwt_identity()
     post_text = data.get('post_text')
-    post_image = data.get('post_image')
+    post_image_file = request.files.get('post_image')
 
     try:
         user_ref = db.collection('users').document(user_id)
         user_doc = user_ref.get()
         if not user_doc.exists:
             raise Exception("User not found")
-        
+
         user_data = user_doc.to_dict()
-        
+
+        if post_image_file:
+            image_filename = f"{uuid.uuid4()}-{post_image_file.filename}"
+            firebase_bucket = storage.bucket('cocodiag.appspot.com')
+            blob = firebase_bucket.blob(f"forums/{user_id}/{image_filename}")
+            post_image_file.seek(0)
+            blob.upload_from_file(post_image_file, content_type= post_image_file.content_type)
+            image_url = blob.public_url
+        else:
+            image_url = None
+
         doc_ref = db.collection('forum').document()
         doc_ref.set({
             "user_id": user_id,
@@ -29,7 +41,7 @@ def create_post():
             "user_name": user_data.get('name', ''),
             "user_email": user_data.get('email', ''),
             "post_text": post_text,
-            "post_image": post_image,
+            "post_image": image_url,
             "count_like": 0,
             "count_comment": 0,
             "created_at": int(datetime.now().timestamp()),
@@ -41,6 +53,7 @@ def create_post():
 
         return jsonify(post_data), 201
     except Exception as e:
+        logging.error(f"Create post error: {e}")
         return jsonify({"message": str(e)}), 400
 
 @forum_bp.route('/forum', methods=['GET'])
@@ -147,7 +160,9 @@ def create_comment():
             post_data["count_comment"] += 1
         else:
             raise Exception("Comment can't be empty")
-
+        
+        post_ref.update({"count_comment": post_data["count_comment"]})
+        
         comment_ref = post_ref.collection('comments').document()
         comment_ref.set({
             "user_id": user_id,
