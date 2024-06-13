@@ -142,6 +142,12 @@ def create_comment():
         if not post_doc.exists:
             raise Exception("Post not found")
 
+        post_data = post_doc.to_dict()
+        if comment_text:
+            post_data["count_comment"] += 1
+        else:
+            raise Exception("Comment can't be empty")
+
         comment_ref = post_ref.collection('comments').document()
         comment_ref.set({
             "user_id": user_id,
