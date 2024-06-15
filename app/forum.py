@@ -22,7 +22,6 @@ def create_post():
         if not user_doc.exists:
             raise Exception("User not found")
 
-        user_data = user_doc.to_dict()
 
         if post_image_file:
             image_filename = f"{uuid.uuid4()}-{post_image_file.filename}"
@@ -37,9 +36,6 @@ def create_post():
         doc_ref = db.collection('forum').document()
         doc_ref.set({
             "user_id": user_id,
-            "user_image": user_data.get('imageProfile', ''),
-            "user_name": user_data.get('name', ''),
-            "user_email": user_data.get('email', ''),
             "post_text": post_text,
             "post_image": image_url,
             "count_like": 0,
