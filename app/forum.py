@@ -6,6 +6,8 @@ import logging
 from datetime import datetime
 import uuid
 from urllib.parse import urlparse
+from PIL import Image
+import io
 
 forum_bp = Blueprint('forum_bp', __name__)
 
@@ -23,16 +25,32 @@ def create_post():
         if not user_doc.exists:
             raise Exception("User not found")
 
-
+        image_url = None
+        def allowed_file(filename):
+            allowed_extensions = {'png', 'jpg', 'jpeg'}
+            return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
+        
         if post_image_file:
+            if not allowed_file(post_image_file.filename):
+                return jsonify({'error': 'Invalid file extension'}), 400
+            
+            if post_image_file.mimetype not in ['image/jpeg', 'image/png']:
+                return jsonify({'error': 'Only JPEG and PNG files are allowed'}), 400
+
+            try:
+                image = Image.open(io.BytesIO(post_image_file.read()))
+                image.verify()
+                post_image_file.seek(0)
+            except (IOError, SyntaxError) as e:
+                logging.error(f"File is not a valid image: {str(e)}")
+                return jsonify({'error': 'Invalid image file'}), 400
+            
             image_filename = f"{uuid.uuid4()}-{post_image_file.filename}"
             firebase_bucket = storage.bucket('cocodiag.appspot.com')
             blob = firebase_bucket.blob(f"forums/{user_id}/{image_filename}")
-            post_image_file.seek(0)
-            blob.upload_from_file(post_image_file, content_type= post_image_file.content_type)
+            blob.upload_from_file(post_image_file, content_type=post_image_file.content_type)
             image_url = blob.public_url
-        else:
-            image_url = None
+
 
         doc_ref = db.collection('forum').document()
         doc_ref.set({

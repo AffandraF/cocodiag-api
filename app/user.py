@@ -4,6 +4,8 @@ from config.firebase_config import auth, db
 from firebase_admin import storage
 import logging
 import uuid
+from PIL import Image
+import io
 
 user_bp = Blueprint('user_bp', __name__)
 
@@ -20,15 +22,31 @@ def update_user():
         
         image_profile_file = request.files.get('imageProfile')
 
+        image_profile_url = None
+        def allowed_file(filename):
+            allowed_extensions = {'png', 'jpg', 'jpeg'}
+            return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
+        
         if image_profile_file:
+            if not allowed_file(image_profile_file.filename):
+                return jsonify({'error': 'Invalid file extension'}), 400
+            
+            if image_profile_file.mimetype not in ['image/jpeg', 'image/png']:
+                return jsonify({'error': 'Only JPEG and PNG files are allowed'}), 400
+
+            try:
+                image = Image.open(io.BytesIO(image_profile_file.read()))
+                image.verify()
+                image_profile_file.seek(0)
+            except (IOError, SyntaxError) as e:
+                logging.error(f"File is not a valid image: {str(e)}")
+                return jsonify({'error': 'Invalid image file'}), 400
+            
             image_filename = f"{uuid.uuid4()}-{image_profile_file.filename}"
             firebase_bucket = storage.bucket('cocodiag.appspot.com')
-            blob = firebase_bucket.blob(f"profile/{user_id}/{image_filename}")
-            image_profile_file.seek(0)
-            blob.upload_from_file(image_profile_file, content_type= image_profile_file.content_type)
+            blob = firebase_bucket.blob(f"forums/{user_id}/{image_filename}")
+            blob.upload_from_file(image_profile_file, content_type=image_profile_file.content_type)
             image_profile_url = blob.public_url
-        else:
-            image_profile_url = None
 
         auth.update_user(
             user_id,

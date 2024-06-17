@@ -11,6 +11,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 import json
 from config.firebase_config import db
 import uuid
+from werkzeug.utils import secure_filename
 
 prediction_bp = Blueprint('prediction_bp', __name__)
 
@@ -55,6 +56,10 @@ def prepare_image(image, target_size):
     image = np.expand_dims(image, axis=0)
     return image
 
+def allowed_file(filename):
+    allowed_extensions = {'png', 'jpg', 'jpeg'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
+
 @prediction_bp.route('/predict', methods=['POST'])
 @jwt_required()
 def predict():
@@ -63,9 +68,16 @@ def predict():
     file = request.files['imageFile']
     if file.filename == '':
         return jsonify({'error': 'Empty file'}), 400
-
+    
+    if not allowed_file(file.filename):
+        return jsonify({'error': 'Invalid file extension'}), 400
+    
+    if file.mimetype not in ['image/jpeg', 'image/png']:
+        return jsonify({'error': 'Only JPEG and PNG files are allowed'}), 400
+    
     try:
         image = Image.open(io.BytesIO(file.read()))
+        image.verify()
         processed_image = prepare_image(image, target_size=(224, 224))
         predictions = model.predict(processed_image)
         predicted_class_index = np.argmax(predictions, axis=1)[0]
