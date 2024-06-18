@@ -20,10 +20,11 @@ def update_user():
         image_profile_file = request.files.get('imageProfile')
 
         image_url = None
-        if not allowed_file(image_profile_file.filename):
-            return jsonify({'error': 'Invalid file extension'}), 400
+        if image_profile_file:
+            if not allowed_file(image_profile_file.filename):
+                return jsonify({'error': 'Invalid file extension'}), 400
         
-        image_url = save_image(image_profile_file, user_id, 'users')
+            image_url = save_image(image_profile_file, user_id, 'users')
 
         auth.update_user(
             user_id,

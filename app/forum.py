@@ -24,10 +24,10 @@ def create_post():
             raise Exception("User not found")
 
         image_url = None
-        if not allowed_file(post_image_file.filename):
-            return jsonify({'error': 'Invalid file extension'}), 400
-        
-        image_url = save_image(post_image_file, user_id, 'forums')
+        if post_image_file:
+            if not allowed_file(post_image_file.filename):
+                return jsonify({'error': 'Invalid file extension'}), 400
+            image_url = save_image(post_image_file, user_id, 'forums')
 
         doc_ref = db.collection('forum').document()
         doc_ref.set({
