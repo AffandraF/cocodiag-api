@@ -82,6 +82,8 @@ def predict():
 
         disease_info = class_info.get(predicted_class)
 
+        user_id = get_jwt_identity()
+        image_url = save_image(file, user_id, 'uploads')
         response_data = {
             'label': predicted_class,
             'accuracy': f"{accuracy:.2%}",
@@ -89,28 +91,32 @@ def predict():
             'caused_by': disease_info['caused_by'],
             'symptoms': disease_info['symptoms'],
             'controls': disease_info['controls'],
-            'created_at': int(time.time())
-        }
-
-        user_id = get_jwt_identity()
-
-        image_url = save_image(file, user_id, 'uploads')
-
-        doc_ref = db.collection('history').document()
-        doc_ref.set({
+            'created_at': int(time.time()),
             "user_id": user_id,
             "image": file.filename,
-            "created_at": response_data['created_at'],
-            "result": {
-                'label': response_data['label'],
-                'accuracy': response_data['accuracy'],
-                'name': response_data['name'],
-                'caused_by': response_data['caused_by'],
-                'symptoms': response_data['symptoms'],
-                'controls': response_data['controls']
-            },
-            "image_url": image_url
-        })
+            "img_url": image_url
+        }
+
+        
+
+        # image_url = save_image(file, user_id, 'uploads')
+
+
+        # doc_ref = db.collection('history').document()
+        # doc_ref.set({
+        #     "user_id": user_id,
+        #     "image": file.filename,
+        #     "created_at": response_data['created_at'],
+        #     "result": {
+        #         'label': response_data['label'],
+        #         'accuracy': response_data['accuracy'],
+        #         'name': response_data['name'],
+        #         'caused_by': response_data['caused_by'],
+        #         'symptoms': response_data['symptoms'],
+        #         'controls': response_data['controls']
+        #     },
+        #     "image_url": image_url
+        # })
 
         return jsonify(response_data)
     except Exception as e:
