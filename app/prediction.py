@@ -11,7 +11,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 import json
 from config.firebase_config import db
 import uuid
-from werkzeug.utils import secure_filename
+from config.save_image import allowed_file, save_image
 
 prediction_bp = Blueprint('prediction_bp', __name__)
 
@@ -56,10 +56,6 @@ def prepare_image(image, target_size):
     image = np.expand_dims(image, axis=0)
     return image
 
-def allowed_file(filename):
-    allowed_extensions = {'png', 'jpg', 'jpeg'}
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
-
 @prediction_bp.route('/predict', methods=['POST'])
 @jwt_required()
 def predict():
@@ -70,14 +66,12 @@ def predict():
         return jsonify({'error': 'Empty file'}), 400
     
     if not allowed_file(file.filename):
-        return jsonify({'error': 'Invalid file extension'}), 400
-    
-    if file.mimetype not in ['image/jpeg', 'image/png']:
-        return jsonify({'error': 'Only JPEG and PNG files are allowed'}), 400
-    
+        return jsonify({'error': 'Invalid file extension'}), 400    
+       
     try:
         image = Image.open(io.BytesIO(file.read()))
-        image.verify()
+        img = image
+        img.verify()
         processed_image = prepare_image(image, target_size=(224, 224))
         predictions = model.predict(processed_image)
         predicted_class_index = np.argmax(predictions, axis=1)[0]
@@ -104,12 +98,7 @@ def predict():
 
         user_id = get_jwt_identity()
 
-        image_filename = f"{uuid.uuid4()}-{file.filename}"
-        firebase_bucket = storage.bucket('cocodiag.appspot.com')
-        blob = firebase_bucket.blob(f'uploads/{user_id}/{image_filename}')
-        file.seek(0)
-        blob.upload_from_file(file, content_type=file.content_type)
-        image_url = blob.public_url
+        image_url = save_image(file, user_id, 'uploads')
 
         doc_ref = db.collection('history').document()
         doc_ref.set({

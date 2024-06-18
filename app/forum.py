@@ -4,10 +4,8 @@ from config.firebase_config import db
 from firebase_admin import storage
 import logging
 from datetime import datetime
-import uuid
 from urllib.parse import urlparse
-from PIL import Image
-import io
+from config.save_image import allowed_file, save_image
 
 forum_bp = Blueprint('forum_bp', __name__)
 
@@ -26,31 +24,10 @@ def create_post():
             raise Exception("User not found")
 
         image_url = None
-        def allowed_file(filename):
-            allowed_extensions = {'png', 'jpg', 'jpeg'}
-            return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
+        if not allowed_file(post_image_file.filename):
+            return jsonify({'error': 'Invalid file extension'}), 400
         
-        if post_image_file:
-            if not allowed_file(post_image_file.filename):
-                return jsonify({'error': 'Invalid file extension'}), 400
-            
-            if post_image_file.mimetype not in ['image/jpeg', 'image/png']:
-                return jsonify({'error': 'Only JPEG and PNG files are allowed'}), 400
-
-            try:
-                image = Image.open(io.BytesIO(post_image_file.read()))
-                image.verify()
-                post_image_file.seek(0)
-            except (IOError, SyntaxError) as e:
-                logging.error(f"File is not a valid image: {str(e)}")
-                return jsonify({'error': 'Invalid image file'}), 400
-            
-            image_filename = f"{uuid.uuid4()}-{post_image_file.filename}"
-            firebase_bucket = storage.bucket('cocodiag.appspot.com')
-            blob = firebase_bucket.blob(f"forums/{user_id}/{image_filename}")
-            blob.upload_from_file(post_image_file, content_type=post_image_file.content_type)
-            image_url = blob.public_url
-
+        image_url = save_image(post_image_file, user_id, 'forums')
 
         doc_ref = db.collection('forum').document()
         doc_ref.set({
