@@ -12,8 +12,8 @@ def allowed_file(filename):
 def save_image(image_file, user_id, path):    
     try:
         image = Image.open(io.BytesIO(image_file.read()))
-        img = image.copy()
-        img.verify()
+        image.verify()
+        image = Image.open(io.BytesIO(image_file.read()))
         image_file.seek(0)
     except (IOError, SyntaxError) as e:
         logging.error(f"File is not a valid image: {str(e)}")

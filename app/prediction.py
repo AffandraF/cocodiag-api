@@ -68,8 +68,8 @@ def predict():
        
     try:
         image = Image.open(io.BytesIO(file.read()))
-        img = image.copy()
-        img.verify()
+        image.verify()
+        image = Image.open(io.BytesIO(file.read()))
         processed_image = prepare_image(image, target_size=(224, 224))
         predictions = model.predict(processed_image)
         predicted_class_index = np.argmax(predictions, axis=1)[0]
