@@ -82,7 +82,7 @@ def predict():
 
         disease_info = class_info.get(predicted_class)
 
-        response = {
+        response_data = {
             'label': predicted_class,
             'accuracy': f"{accuracy:.2%}",
             'name': disease_info['name'],
@@ -100,12 +100,19 @@ def predict():
         doc_ref.set({
             "user_id": user_id,
             "image": file.filename,
-            "created_at": response['created_at'],
-            "result": response,
+            "created_at": response_data['created_at'],
+            "result": {
+                'label': response_data['label'],
+                'accuracy': response_data['accuracy'],
+                'name': response_data['name'],
+                'caused_by': response_data['caused_by'],
+                'symptoms': response_data['symptoms'],
+                'controls': response_data['controls']
+            },
             "image_url": image_url
         })
 
-        return jsonify(response)
+        return jsonify(response_data)
     except Exception as e:
         logging.error(f"Prediction error: {str(e)}")
         return jsonify({'error': str(e)}), 500
