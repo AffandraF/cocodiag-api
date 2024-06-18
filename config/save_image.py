@@ -12,7 +12,7 @@ def allowed_file(filename):
 def save_image(image_file, user_id, path):    
     try:
         image = Image.open(io.BytesIO(image_file.read()))
-        img = image
+        img = image.copy()
         img.verify()
         image_file.seek(0)
     except (IOError, SyntaxError) as e:

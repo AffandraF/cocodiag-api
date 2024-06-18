@@ -1,5 +1,4 @@
 from flask import Blueprint, request, jsonify
-from firebase_admin import storage
 from google.cloud import storage as gcs_storage
 import tensorflow as tf
 import numpy as np
@@ -10,7 +9,6 @@ import time
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import json
 from config.firebase_config import db
-import uuid
 from config.save_image import allowed_file, save_image
 
 prediction_bp = Blueprint('prediction_bp', __name__)
@@ -70,7 +68,7 @@ def predict():
        
     try:
         image = Image.open(io.BytesIO(file.read()))
-        img = image
+        img = image.copy()
         img.verify()
         processed_image = prepare_image(image, target_size=(224, 224))
         predictions = model.predict(processed_image)
