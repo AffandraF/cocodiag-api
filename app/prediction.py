@@ -93,8 +93,9 @@ def predict():
         }
 
         user_id = get_jwt_identity()
-
+        file.seek(0)
         image_url = save_image(file, user_id, 'uploads')
+        
         doc_ref = db.collection('history').document()
         doc_ref.set({
             "user_id": user_id,
