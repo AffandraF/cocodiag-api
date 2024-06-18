@@ -20,4 +20,4 @@ def save_image(image_file, user_id, path):
   
     except Exception as e:
         logging.error(f"Failed to upload image to Firebase Storage: {str(e)}")
-        return jsonify({'error': 'Failed to upload image to Firebase Storage'}), 500
+        raise e
