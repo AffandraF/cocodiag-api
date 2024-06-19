@@ -52,6 +52,7 @@ def create_post():
         return jsonify({"message": str(e)}), 400
 
 @forum_bp.route('/forum', methods=['GET'])
+@jwt_required()
 def get_latest_posts():
     limit = request.args.get('limit', 20)
     try:
@@ -70,6 +71,7 @@ def get_latest_posts():
         return jsonify({"message": str(e)}), 400
 
 @forum_bp.route('/forum/<post_id>', methods=['GET'])
+@jwt_required()
 def get_post(post_id):
     try:
         post_ref = db.collection('forum').document(post_id)
@@ -87,6 +89,7 @@ def get_post(post_id):
         return jsonify({"message": str(e)}), 400
     
 @forum_bp.route('/forum/user/<user_id>', methods=['GET'])
+@jwt_required()
 def get_posts_by_user(user_id):
     try:
         user_ref = db.collection('users').document(user_id)
@@ -228,6 +231,7 @@ def create_comment():
         return jsonify({"message": str(e)}), 400
     
 @forum_bp.route('/forum/<post_id>/comments', methods=['GET'])
+@jwt_required()
 def get_comments_by_post(post_id):
     try:
         post_ref = db.collection('forum').document(post_id)
