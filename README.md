@@ -32,6 +32,7 @@
   - [Price](#price)
   - [News](#news)
   - [Image](#image)
+- [Error Handling](#error-handling)
 - [Data Source](#data-source)
 - [Author](#author)
 </details>
@@ -57,7 +58,7 @@ A Flask-based application to serve the backend API for the CocoDiag application
 
 1. **Clone Repository**
    ```bash
-   https://github.com/AffandraF/cocodiag-api.git
+   git clone https://github.com/AffandraF/cocodiag-api.git
    cd cocodiag-api
    ```
 2. **Set up Google Cloud SDK**: Make sure you have the [Google Cloud SDK](https://cloud.google.com/sdk/docs/install) installed and initialized.
@@ -69,21 +70,21 @@ A Flask-based application to serve the backend API for the CocoDiag application
 3. **Build the Docker image**:
 
    ```bash
-   docker build -t gcr.io/[PROJECT-ID]/project-name .
+   docker build -t gcr.io/[PROJECT-ID]/[PROJECT-NAME] .
    ```
 
-   Replace `[PROJECT-ID]` with your actual Google Cloud project ID.
+   Replace `[PROJECT-ID]` and `[PROJECT-NAME]` with your actual Google Cloud project ID and Name.
 
 4. **Push the Docker image to Google Container Registry**:
 
    ```bash
-   docker push gcr.io/[PROJECT-ID]/project-name
+   docker push gcr.io/[PROJECT-ID]/[PROJECT-NAME]
    ```
 
 5. **Deploy to Cloud Run**:
    ```bash
    gcloud run deploy project-name \
-       --image gcr.io/[PROJECT-ID]/project-name \
+       --image gcr.io/[PROJECT-ID]/[PROJECT-NAME] \
        --platform managed \
        --region [REGION] \
        --allow-unauthenticated
@@ -556,6 +557,15 @@ A Flask-based application to serve the backend API for the CocoDiag application
   - `Authorization`: Bearer `<token>`
 - Request URL: `/image/<img_url>`
 - Response: File `image`
+
+## Error Handling
+
+- Response
+  ```Json
+  {
+    "message": "error message"
+  }
+  ```
 
 ## Data Source
 
