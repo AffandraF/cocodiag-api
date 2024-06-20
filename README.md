@@ -1,11 +1,9 @@
 # CocoDiag API
 
-## Overview
+<details>
+<summary>Table of Contents</summary>
 
-A Flask-based application to serve the backend API for the CocoDiag application
-
-## List Of Content
-
+- [Overview](#overview)
 - [Features](#features)
 - [Deployment](#deployment)
 - [Endpoints](#endpoints)
@@ -34,8 +32,15 @@ A Flask-based application to serve the backend API for the CocoDiag application
   - [Price](#price)
   - [News](#news)
   - [Image](#image)
+- [Data Source](#data-source)
+- [Author](#author)
+</details>
 
-## Features
+## Overview
+
+A Flask-based application to serve the backend API for the CocoDiag application
+
+### Features
 
 - User Authentication: Signup and Signin functionality using Firebase and JWT.
 - Update User: Update user data.
@@ -305,31 +310,30 @@ A Flask-based application to serve the backend API for the CocoDiag application
 - Request URL `forum?limit=20`
 - Response
   ```json
-      # OK
+  {
+    "forums": [
       {
-          "forums": [
-              {
-                  "user_id": "user_id",
-                  "post_id": "post_id",
-                  "post_text": "text",
-                  "post_image": "image",      // nullable
-                  "count_like": 0,
-                  "count_comment": 0,
-                  "created_at": 1759020,
-                  "updated_at": 1759020,
-              },
-              {
-                  "user_id": "user_id",
-                  "post_id": "post_id",
-                  "post_text": "text",
-                  "post_image": "image_url",      // nullable
-                  "count_like": 0,
-                  "count_comment": 0,
-                  "created_at": 1759020,
-                  "updated_at": 1759020,
-              },
-          ]
+        "user_id": "user_id",
+        "post_id": "post_id",
+        "post_text": "text",
+        "post_image": "image_url", // nullable
+        "count_like": 0,
+        "count_comment": 0,
+        "created_at": 1759020,
+        "updated_at": 1759020
+      },
+      {
+        "user_id": "user_id",
+        "post_id": "post_id",
+        "post_text": "text",
+        "post_image": "image_url", // nullable
+        "count_like": 0,
+        "count_comment": 0,
+        "created_at": 1759020,
+        "updated_at": 1759020
       }
+    ]
+  }
   ```
 
 #### 3. Fetch Post By Id
@@ -398,7 +402,7 @@ A Flask-based application to serve the backend API for the CocoDiag application
 - Response
   ```JSON
   {
-      "message": "post has been deleted"
+    "message": "post has been deleted"
   }
   ```
 
@@ -418,7 +422,7 @@ A Flask-based application to serve the backend API for the CocoDiag application
 - Response
   ```JSON
   {
-      "message": "post has been deleted"
+    "message": "post has been deleted"
   }
   ```
 
@@ -555,11 +559,18 @@ A Flask-based application to serve the backend API for the CocoDiag application
 - Request URL: `/image/<img_url>`
 - Response: File `image`
 
+## Data Source
+
+This application fetches data from this following website:
+
+- Articles data: [[1]](#https://www.mdpi.com/2073-4395/12/12/3164) [[2]](#https://www.ijcmas.com/9-10-2020/E.%20Rajeswari,%20et%20al.pdf) [[3]](#https://www.agriculture.gov.au/biosecurity-trade/policy/australia/naqs/naqs-target-lists/lethal_diseases_of_coconut) [[4]](#https://www.cabidigitallibrary.org/doi/10.1079/9781789249736.0005) [[5]](#https://www.researchgate.net/publication/228349346_Lethal_yellowing_disease_of_the_coconut_palms_Cocos_nucifera_L_An_overview_of_the_crises) [[6]](#https://agriprima.polije.ac.id/index.php/journal/article/view/v7i2-e/pdf) [[7]](#http://ijeais.org/wp-content/uploads/2019/04/IJAER190402.pdf) [[8]](#https://www.nature.com/articles/s41598-024-61916-4) [[9]](#https://www.sciencedirect.com/science/article/pii/S2352340923007692) [[10]](#https://bsppjournals.onlinelibrary.wiley.com/doi/full/10.1111/j.1365-3059.2009.02153.x)
+- Real-time coconut price data [[11]](#https://infopangan.jakarta.go.id/publik/dashboard/23)
+
 ## Author
 
 Team ID: C241-PS469
 
-| ID           | Name                  |
-| ------------ | --------------------- |
-| C295D4KY1243 | Affandra Fahrezi      |
-| C335D4KY0015 | Muhamad Ivan Fadillah |
+| ID           | Name                                                     |
+| ------------ | -------------------------------------------------------- |
+| C295D4KY1243 | [Affandra Fahrezi](#https://github.com/AffandraF)        |
+| C335D4KY0015 | [Muhamad Ivan Fadillah](#https://github.com/ivanfdillah) |
