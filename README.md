@@ -528,26 +528,24 @@ A Flask-based application to serve the backend API for the CocoDiag application
 - Request URL: `/getNews`
 - Response
   ```json
-  {
-    "article": [
-      {
-        "author": "author_name",
-        "content": "text",
-        "date": "date",
-        "img_url": "image_url",
-        "title": "text",
-        "url": "url"
-      },
-      {
-        "author": "author_name",
-        "content": "text",
-        "date": "date",
-        "img_url": "image_url",
-        "title": "text",
-        "url": "url"
-      }
-    ]
-  }
+  [
+    {
+      "author": "author_name",
+      "content": "text",
+      "date": "date",
+      "img_url": "image_url",
+      "title": "text",
+      "url": "url"
+    },
+    {
+      "author": "author_name",
+      "content": "text",
+      "date": "date",
+      "img_url": "image_url",
+      "title": "text",
+      "url": "url"
+    }
+  ]
   ```
 
 ### Image
