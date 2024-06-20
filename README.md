@@ -563,14 +563,14 @@ A Flask-based application to serve the backend API for the CocoDiag application
 
 This application fetches data from this following website:
 
-- Articles data: [[1]](#https://www.mdpi.com/2073-4395/12/12/3164) [[2]](#https://www.ijcmas.com/9-10-2020/E.%20Rajeswari,%20et%20al.pdf) [[3]](#https://www.agriculture.gov.au/biosecurity-trade/policy/australia/naqs/naqs-target-lists/lethal_diseases_of_coconut) [[4]](#https://www.cabidigitallibrary.org/doi/10.1079/9781789249736.0005) [[5]](#https://www.researchgate.net/publication/228349346_Lethal_yellowing_disease_of_the_coconut_palms_Cocos_nucifera_L_An_overview_of_the_crises) [[6]](#https://agriprima.polije.ac.id/index.php/journal/article/view/v7i2-e/pdf) [[7]](#http://ijeais.org/wp-content/uploads/2019/04/IJAER190402.pdf) [[8]](#https://www.nature.com/articles/s41598-024-61916-4) [[9]](#https://www.sciencedirect.com/science/article/pii/S2352340923007692) [[10]](#https://bsppjournals.onlinelibrary.wiley.com/doi/full/10.1111/j.1365-3059.2009.02153.x)
-- Real-time coconut price data [[11]](#https://infopangan.jakarta.go.id/publik/dashboard/23)
+- Articles data: [[1]](https://www.mdpi.com/2073-4395/12/12/3164) [[2]](https://www.ijcmas.com/9-10-2020/E.%20Rajeswari,%20et%20al.pdf) [[3]](https://www.agriculture.gov.au/biosecurity-trade/policy/australia/naqs/naqs-target-lists/lethal_diseases_of_coconut) [[4]](https://www.cabidigitallibrary.org/doi/10.1079/9781789249736.0005) [[5]](https://www.researchgate.net/publication/228349346_Lethal_yellowing_disease_of_the_coconut_palms_Cocos_nucifera_L_An_overview_of_the_crises) [[6]](https://agriprima.polije.ac.id/index.php/journal/article/view/v7i2-e/pdf) [[7]](http://ijeais.org/wp-content/uploads/2019/04/IJAER190402.pdf) [[8]](https://www.nature.com/articles/s41598-024-61916-4) [[9]](https://www.sciencedirect.com/science/article/pii/S2352340923007692) [[10]](https://bsppjournals.onlinelibrary.wiley.com/doi/full/10.1111/j.1365-3059.2009.02153.x)
+- Real-time coconut price data [[11]](https://infopangan.jakarta.go.id/publik/dashboard/23)
 
 ## Author
 
 Team ID: C241-PS469
 
-| ID           | Name                                                     |
-| ------------ | -------------------------------------------------------- |
-| C295D4KY1243 | [Affandra Fahrezi](#https://github.com/AffandraF)        |
-| C335D4KY0015 | [Muhamad Ivan Fadillah](#https://github.com/ivanfdillah) |
+| ID           | Name                                                    |
+| ------------ | ------------------------------------------------------- |
+| C295D4KY1243 | [Affandra Fahrezi](https://github.com/AffandraF)        |
+| C335D4KY0015 | [Muhamad Ivan Fadillah](https://github.com/ivanfdillah) |
